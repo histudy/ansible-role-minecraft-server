@@ -1,0 +1,9 @@
+---
+minecraft_server_user: minecraft
+minecraft_server_group: minecraft
+minecraft_server_home: /opt/minecraft
+
+minecraft_server_max_memory: 1024M
+minecraft_server_initial_memory: 1024M
+
+minecraft_server_version: latest

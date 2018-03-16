@@ -1,0 +1,77 @@
+---
+- name: create Minecraft group
+  group:
+    name: "{{ minecraft_server_group }}"
+    system: yes
+- name: create Minecraft user
+  user:
+    name: "{{ minecraft_server_user }}"
+    group: "{{ minecraft_server_group }}"
+    home: "{{ minecraft_server_home }}"
+    system: yes
+- block:
+    - name: retrieve version manifest
+      uri:
+        url: https://launchermeta.mojang.com/mc/game/version_manifest.json
+        return_content: yes
+      register: result
+    - name: find and set latest version
+      set_fact:
+        minecraft_server_version: "{{ (result.content|from_json).latest.release }}"
+  when: minecraft_server_version == 'latest'
+- name: download Minecraft server
+  get_url:
+    url: "https://s3.amazonaws.com/Minecraft.Download/versions/{{ minecraft_server_version }}/minecraft_server.{{ minecraft_server_version }}.jar"
+    dest: "{{ minecraft_server_home }}/minecraft_server.{{ minecraft_server_version }}.jar"
+    owner: "{{ minecraft_server_user }}"
+    group: "{{ minecraft_server_group }}"
+    mode: 0755
+- name: download Minecraft server
+  file:
+    path: "{{ minecraft_server_home }}/minecraft_server.jar"
+    src: "{{ minecraft_server_home }}/minecraft_server.{{ minecraft_server_version }}.jar"
+    owner: "{{ minecraft_server_user }}"
+    group: "{{ minecraft_server_group }}"
+    mode: 0755
+    state: link
+  notify: restart minecraft-server
+- name: create systemd unit file
+  template:
+    src: minecraft-server.service.j2
+    dest: /lib/systemd/system/minecraft-server.service
+  notify: restart minecraft-server
+- name: agree to EULA
+  copy:
+    src: eula.txt
+    dest: "{{ minecraft_server_home }}/eula.txt"
+    mode: 0644
+    owner: "{{ minecraft_server_user }}"
+    group: "{{ minecraft_server_group }}"
+- name: minecraft-server enabled on system startup
+  systemd:
+    name: minecraft-server
+    daemon_reload: yes
+    enabled: yes
+- name: install ufw
+  apt:
+    name: ufw
+- name: ufw is active and enabled on system startup
+  systemd:
+    name: ufw
+    enabled: yes
+    state: started
+- name: allow ssh port
+  ufw:
+    rule: limit
+    port: 22
+    proto: tcp
+- name: enable ufw and set default policy
+  ufw:
+    logging: yes
+    state: enabled
+    policy: deny
+- name: allow mincloft server port
+  ufw:
+    rule: allow
+    port: 25565
+    proto: tcp
