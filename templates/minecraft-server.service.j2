@@ -6,7 +6,7 @@ After=network.target
 WorkingDirectory={{ minecraft_server_home }}
 User={{ minecraft_server_user }}
 Group={{ minecraft_server_group }}
-ExecStart=/usr/bin/java -Xms{{ minecraft_server_initial_memory }} -Xmx{{ minecraft_server_max_memory }} -jar minecraft_server.jar nogui
+ExecStart=/usr/bin/java -Xms{{ minecraft_server_initial_memory }} -Xmx{{ minecraft_server_max_memory }} -jar {{ minecraft_server_home }}/minecraft_server.jar nogui
 Restart=on-failure
 RestartSec=20 5
 
