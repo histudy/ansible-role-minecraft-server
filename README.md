@@ -107,8 +107,7 @@ minecraft_server_cfg:
 ### minecraft_server_whitelist
 
 Minecraftサーバーにログインできるユーザーの一覧を指定します。  
-ホワイトリストの設定が有効になっている場合のみ、  
-指定された内容が反映されます。
+ホワイトリストの設定が有効になっている場合のみ、指定された内容が反映されます。
 
 ```yaml
 minecraft_server_whitelist:
