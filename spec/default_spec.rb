@@ -37,6 +37,6 @@ describe service('minecraft-server') do
   it { should be_running }
 end
 
-describe port(25565) do
+describe port(property['minecraft_server_cfg']['server_port']) do
   it { should be_listening }
 end

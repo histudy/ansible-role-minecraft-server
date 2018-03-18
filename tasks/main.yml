@@ -44,13 +44,22 @@
   copy:
     src: eula.txt
     dest: "{{ minecraft_server_home }}/eula.txt"
-    mode: 0644
     owner: "{{ minecraft_server_user }}"
     group: "{{ minecraft_server_group }}"
+    mode: 0644
+- name: create property file
+  template:
+    src: server.properties.j2
+    dest: "{{ minecraft_server_home }}/server.properties"
+    owner: "{{ minecraft_server_user }}"
+    group: "{{ minecraft_server_group }}"
+    mode: 0644
+  notify: restart minecraft-server
 - name: minecraft-server enabled on system startup
   systemd:
     name: minecraft-server
     daemon_reload: yes
+    state: started
     enabled: yes
 - name: install ufw
   apt:
@@ -73,5 +82,5 @@
 - name: allow mincloft server port
   ufw:
     rule: allow
-    port: 25565
+    port: "{{ minecraft_server_cfg.server_port|default(25565) }}"
     proto: tcp
