@@ -36,7 +36,7 @@ minecraft_server_cfg:
   view_distance: 10
   resource_pack:
   spawn_animals: yes
-  white_list: no
+  white_list: yes
   generate_structures: yes
   online_mode: yes
   max_build_height: 256
@@ -45,3 +45,8 @@ minecraft_server_cfg:
   use_native_transport: yes
   motd: A Minecraft Server
   enable_rcon: no
+
+# ホワイトリストに追加するユーザー名の一覧
+minecraft_server_whitelist: []
+  # - user_name1
+  # - user_name2

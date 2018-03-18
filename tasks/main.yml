@@ -25,14 +25,12 @@
     dest: "{{ minecraft_server_home }}/minecraft_server.{{ minecraft_server_version }}.jar"
     owner: "{{ minecraft_server_user }}"
     group: "{{ minecraft_server_group }}"
-    mode: 0755
 - name: download Minecraft server
   file:
     path: "{{ minecraft_server_home }}/minecraft_server.jar"
     src: "{{ minecraft_server_home }}/minecraft_server.{{ minecraft_server_version }}.jar"
     owner: "{{ minecraft_server_user }}"
     group: "{{ minecraft_server_group }}"
-    mode: 0755
     state: link
   notify: restart minecraft-server
 - name: create systemd unit file
@@ -55,6 +53,22 @@
     group: "{{ minecraft_server_group }}"
     mode: 0644
   notify: restart minecraft-server
+- name: create whitelist
+  block:
+    - name: define whitelist user variable
+      set_fact:
+        whitelist_users: []
+    - name: add whitelist
+      include_tasks: add_whitelist.yml
+      with_items: "{{ minecraft_server_whitelist }}"
+    - name: create white_list.json
+      template:
+        src: whitelist.json.j2
+        dest: "{{ minecraft_server_home }}/whitelist.json"
+        owner: "{{ minecraft_server_user }}"
+        group: "{{ minecraft_server_group }}"
+        mode: 0644
+  when: minecraft_server_cfg.white_list
 - name: minecraft-server enabled on system startup
   systemd:
     name: minecraft-server

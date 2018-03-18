@@ -1,0 +1,9 @@
+---
+- name: get uuid
+  uri:
+    url: https://api.mojang.com/users/profiles/minecraft/{{ item }}
+    return_content: yes
+  register: result
+- name: add whitelist
+  set_fact:
+    whitelist_users: "{{ whitelist_users }} + [ {{ result.content|from_json }} ]"
