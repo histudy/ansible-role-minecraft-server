@@ -50,3 +50,8 @@ minecraft_server_cfg:
 minecraft_server_whitelist: []
   # - user_name1
   # - user_name2
+
+# 管理者ユーザーの設定
+minecraft_server_ops: []
+  # - user_name1
+  # - user_name2

@@ -53,22 +53,23 @@
     group: "{{ minecraft_server_group }}"
     mode: 0644
   notify: restart minecraft-server
-- name: create whitelist
-  block:
-    - name: define whitelist user variable
-      set_fact:
-        whitelist_users: []
-    - name: add whitelist
-      include_tasks: add_whitelist.yml
-      with_items: "{{ minecraft_server_whitelist }}"
-    - name: create white_list.json
-      template:
-        src: whitelist.json.j2
-        dest: "{{ minecraft_server_home }}/whitelist.json"
-        owner: "{{ minecraft_server_user }}"
-        group: "{{ minecraft_server_group }}"
-        mode: 0644
+- name: create white-list.txt
+  template:
+    src: white-list.txt.j2
+    dest: "{{ minecraft_server_home }}/white-list.txt"
+    owner: "{{ minecraft_server_user }}"
+    group: "{{ minecraft_server_group }}"
+    mode: 0644
+  notify: restart minecraft-server
   when: minecraft_server_cfg.white_list
+- name: create ops.txt
+  template:
+    src: ops.txt.j2
+    dest: "{{ minecraft_server_home }}/ops.txt"
+    owner: "{{ minecraft_server_user }}"
+    group: "{{ minecraft_server_group }}"
+    mode: 0644
+  notify: restart minecraft-server
 - name: minecraft-server enabled on system startup
   systemd:
     name: minecraft-server
@@ -78,21 +79,6 @@
 - name: install ufw
   apt:
     name: ufw
-- name: ufw is active and enabled on system startup
-  systemd:
-    name: ufw
-    enabled: yes
-    state: started
-- name: allow ssh port
-  ufw:
-    rule: limit
-    port: 22
-    proto: tcp
-- name: enable ufw and set default policy
-  ufw:
-    logging: yes
-    state: enabled
-    policy: deny
 - name: allow mincloft server port
   ufw:
     rule: allow
