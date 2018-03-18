@@ -36,7 +36,7 @@ minecraft_server_cfg:
   view_distance: 10
   resource_pack:
   spawn_animals: yes
-  white_list: yes
+  white_list: no
   generate_structures: yes
   online_mode: yes
   max_build_height: 256

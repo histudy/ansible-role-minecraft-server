@@ -1,9 +1,17 @@
 ---
-- name: get uuid
+- name: get minecraft user data
   uri:
     url: https://api.mojang.com/users/profiles/minecraft/{{ item }}
     return_content: yes
   register: result
+- name: convert variable
+  set_fact:
+    minecraft_user: "{{ result.content|from_json }}"
+- name: define user variable
+  set_fact:
+    white_user:
+      uuid: "{{ minecraft_user.id }}"
+      name: "{{ minecraft_user.name }}"
 - name: add whitelist
   set_fact:
-    whitelist_users: "{{ whitelist_users }} + [ {{ result.content|from_json }} ]"
+    whitelist_users: "{{ whitelist_users }} + [ {{ white_user }} ]"
