@@ -55,7 +55,7 @@ minecraft_server_initial_memory: 1024M
 minecraft_server_version: latest
 ```
 
-**※`latest`が指定されていた場合は最適用時に、    
+**※`latest`が指定されていた場合は再適用時に、    
 Minecraftサーバーのバージョンが変わってしまう可能性があるため注意してください。**
 
 ### minecraft_server_cfg
