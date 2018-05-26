@@ -3,6 +3,11 @@ minecraft-server
 
 Minecraftサーバーをセットアップします。
 
+Dependencies
+------------
+
+* [java](https://github.com/histudy/ansible-role-java)
+
 Role Variables
 --------------
 
