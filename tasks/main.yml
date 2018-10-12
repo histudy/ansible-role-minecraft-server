@@ -9,20 +9,23 @@
     group: "{{ minecraft_server_group }}"
     home: "{{ minecraft_server_home }}"
     system: yes
-- block:
-    - name: retrieve version manifest
-      uri:
-        url: https://launchermeta.mojang.com/mc/game/version_manifest.json
-        return_content: yes
-      register: result
-    - name: find and set latest version
-      set_fact:
-        minecraft_server_version: "{{ (result.content|from_json).latest.release }}"
+- name: set minecraft_version_manifest variable
+  set_fact:
+    minecraft_version_manifest: "{{ lookup('url', 'https://launchermeta.mojang.com/mc/game/version_manifest.json') }}"
+- name: set minecraft_server_version variable
+  set_fact:
+    minecraft_server_version: "{{ minecraft_version_manifest.latest.release }}"
   when: minecraft_server_version == 'latest'
+- name: set minecraft_version_info variable
+  set_fact:
+    minecraft_version_info: "{{ lookup('url', minecraft_info_url) }}"
+  vars:
+    minecraft_info_url: "{{ (minecraft_version_manifest.versions | items2dict(key_name='id', value_name='url'))[minecraft_server_version] }}"
 - name: download Minecraft server
   get_url:
-    url: "https://s3.amazonaws.com/Minecraft.Download/versions/{{ minecraft_server_version }}/minecraft_server.{{ minecraft_server_version }}.jar"
+    url: "{{ minecraft_version_info.downloads.server.url }}"
     dest: "{{ minecraft_server_home }}/minecraft_server.{{ minecraft_server_version }}.jar"
+    checksum: "sha1:{{ minecraft_version_info.downloads.server.sha1 }}"
     owner: "{{ minecraft_server_user }}"
     group: "{{ minecraft_server_group }}"
 - name: download Minecraft server
